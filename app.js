@@ -60,8 +60,8 @@ function teamLabel(key) {
   return `<span class="fi fi-${d.code}" style="margin-right:5px;vertical-align:middle;"></span>${d.name}`;
 }
 
-const LEADERBOARD_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSDbPhOej3DnN_bdvrCQ5R0T6HZg6bBaxKdH17J_Pc3oGOkKkd9V83BUDYlBSCevOrqYK2XQuA7ZMCx/pub?gid=1633860364&single=true&output=csv';
-const FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSdiF0qsK65DcaadNKRzDbue8xtkzAIIev-7yqUqAH3srhEAQg/formResponse';
+const LEADERBOARD_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSVvvNGujGkfjrkQbiedhJVzNl4va6QMYKCMXE2SG14OE0wAf0vczmzVHP_GMASwqBdWHbuRZI10U2x/pub?gid=945396625&single=true&output=csv';
+const FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSdmJQA-TDUR_qj4139Ez1rr0PVe87F9iZy08pNFmLjVMgYIxw/formResponse';
 
 const SCORING_SYSTEM = {
   group_exact: 3,
@@ -465,10 +465,10 @@ function submitPrediction(playerName) {
   };
 
   const formData = new FormData();
-  formData.append("entry.496944209", playerName);
-  formData.append("entry.111222333", faseActiva);
-  formData.append("entry.987654321", JSON.stringify(payload.groupMatches));
-  formData.append("entry.444555666", JSON.stringify(payload.knockout));
+  formData.append("entry.1597300776", playerName);
+  formData.append("entry.1633537385", faseActiva);
+  formData.append("entry.112664031", JSON.stringify(payload.groupMatches));
+  formData.append("entry.634416458", JSON.stringify(payload.knockout));
 
   fetch(FORM_URL, {
     method: "POST",
