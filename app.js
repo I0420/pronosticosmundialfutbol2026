@@ -496,7 +496,7 @@ function submitPrediction(playerName) {
   formData.append("entry.634416458", JSON.stringify(payload.knockout));
   // Campo adicional con los clasificados — añade este entry en tu Google Form
   // como pregunta de texto largo y copia el ID que te dé (entry.XXXXXXXXX)
-  formData.append("entry.634416458", JSON.stringify(clasificados));
+  formData.append("entry.1487290832", JSON.stringify(clasificados));
 
   fetch(FORM_URL, {
     method: "POST",
