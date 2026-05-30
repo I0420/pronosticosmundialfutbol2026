@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin · Mundial 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Syne:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0d0f14; --s1:#151820; --s2:#1c2030; --s3:#222638;
+  --border:#2a2f3e; --border2:#363d52;
+  --gold:#f0b429; --green:#27c77b; --blue:#4a9eff; --red:#f05252;
+  --text:#e8eaf0; --text2:#8b91a8; --text3:#555b73;
+  --mono:'JetBrains Mono',monospace; --sans:'Syne',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;font-size:14px;}
+
+/* LOGIN */
+#loginScreen{display:flex;align-items:center;justify-content:center;min-height:100vh;}
+.login-box{background:var(--s1);border:1px solid var(--border);border-radius:16px;padding:40px;width:360px;text-align:center;}
+.login-box h1{font-size:22px;font-weight:800;margin-bottom:4px;}
+.login-box p{color:var(--text2);font-size:13px;margin-bottom:28px;}
+.login-box input{width:100%;background:var(--bg);border:1px solid var(--border2);color:var(--text);padding:12px 16px;border-radius:8px;font-family:var(--mono);font-size:14px;margin-bottom:14px;outline:none;}
+.login-box input:focus{border-color:var(--gold);}
+.btn-gold{background:var(--gold);color:#000;border:none;padding:12px 28px;border-radius:8px;font-family:var(--sans);font-size:14px;font-weight:700;cursor:pointer;width:100%;transition:opacity .2s;}
+.btn-gold:hover{opacity:.85;}
+.login-err{color:var(--red);font-size:12px;margin-top:8px;display:none;}
+
+/* APP */
+#app{display:none;grid-template-columns:220px 1fr;min-height:100vh;}
+
+/* SIDEBAR */
+.sidebar{background:var(--s1);border-right:1px solid var(--border);display:flex;flex-direction:column;}
+.sb-head{padding:24px 20px 18px;border-bottom:1px solid var(--border);}
+.sb-logo{font-size:10px;font-weight:700;letter-spacing:2px;color:var(--gold);margin-bottom:2px;}
+.sb-title{font-size:16px;font-weight:800;}
+.sb-sub{font-size:11px;color:var(--text3);font-family:var(--mono);}
+.sb-nav{padding:14px 10px;flex:1;}
+.sb-section{font-size:9px;font-weight:700;letter-spacing:2px;color:var(--text3);padding:0 10px;margin:14px 0 6px;}
+.nav-btn{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:7px;cursor:pointer;color:var(--text2);font-size:13px;font-weight:500;border:none;background:none;width:100%;text-align:left;transition:all .15s;}
+.nav-btn:hover{background:var(--s2);color:var(--text);}
+.nav-btn.active{background:var(--s2);color:var(--gold);border-left:2px solid var(--gold);}
+.nav-icon{font-size:15px;width:18px;text-align:center;}
+.sb-foot{padding:14px 18px;border-top:1px solid var(--border);}
+.url-label{font-size:9px;color:var(--text3);font-family:var(--mono);margin-bottom:4px;}
+.url-input{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text2);padding:6px 8px;border-radius:5px;font-size:10px;font-family:var(--mono);}
+.btn-save-url{margin-top:6px;background:var(--s3);border:1px solid var(--border2);color:var(--text);padding:5px 10px;border-radius:5px;font-size:11px;cursor:pointer;width:100%;}
+.btn-save-url:hover{border-color:var(--gold);color:var(--gold);}
+
+/* MAIN */
+.main{padding:32px 40px;overflow-y:auto;}
+.page{display:none;} .page.active{display:block;}
+.page-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+.page-sub{color:var(--text2);font-size:13px;margin-bottom:28px;}
+
+/* CARDS */
+.card{background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:18px;}
+.card-title{font-size:13px;font-weight:700;margin-bottom:14px;color:var(--text);}
+
+/* GRUPOS GRID */
+.grupos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;}
+.grupo-card{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:14px;}
+.grupo-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.grupo-label{font-size:11px;font-weight:700;letter-spacing:1px;color:var(--gold);}
+.grupo-status{font-size:10px;font-family:var(--mono);color:var(--text3);}
+.match-item{display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+.match-item:last-child{border-bottom:none;}
+.match-teams{flex:1;font-size:12px;color:var(--text2);}
+.match-teams strong{color:var(--text);font-weight:600;}
+.score-pair{display:flex;align-items:center;gap:4px;}
+.score-in{width:38px;background:var(--bg);border:1px solid var(--border2);color:var(--text);text-align:center;padding:4px;border-radius:4px;font-family:var(--mono);font-size:13px;font-weight:600;}
+.score-in:focus{border-color:var(--gold);outline:none;}
+.score-in.saved{border-color:var(--green);}
+.score-sep{color:var(--text3);font-size:11px;}
+.btn-save-match{background:none;border:1px solid var(--border2);color:var(--text3);padding:3px 8px;border-radius:4px;font-size:10px;cursor:pointer;font-family:var(--mono);transition:all .15s;white-space:nowrap;}
+.btn-save-match:hover{border-color:var(--green);color:var(--green);}
+.btn-save-match.saving{border-color:var(--gold);color:var(--gold);}
+.btn-save-match.ok{border-color:var(--green);color:var(--green);}
+
+/* RANKING */
+.rank-controls{display:flex;gap:10px;margin-bottom:18px;align-items:center;}
+.btn-recalc{background:var(--gold);color:#000;border:none;padding:10px 22px;border-radius:7px;font-family:var(--sans);font-size:13px;font-weight:700;cursor:pointer;transition:opacity .2s;}
+.btn-recalc:hover{opacity:.85;}
+.btn-recalc:disabled{opacity:.4;cursor:not-allowed;}
+.recalc-status{font-size:12px;color:var(--text2);font-family:var(--mono);}
+.rank-table{width:100%;border-collapse:collapse;}
+.rank-table th{text-align:left;padding:8px 12px;font-size:10px;letter-spacing:1.5px;color:var(--text3);border-bottom:1px solid var(--border);font-family:var(--mono);}
+.rank-table td{padding:10px 12px;border-bottom:1px solid rgba(42,47,62,.4);font-size:13px;}
+.rank-table tr:last-child td{border-bottom:none;}
+.rank-table tr:hover td{background:rgba(255,255,255,.02);}
+.pos-badge{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;font-size:11px;font-weight:700;font-family:var(--mono);}
+.pos-1{background:rgba(240,180,41,.15);color:var(--gold);}
+.pos-2{background:rgba(192,192,192,.1);color:#aab4cc;}
+.pos-3{background:rgba(205,127,50,.1);color:#cd7f32;}
+.pos-n{color:var(--text3);}
+.pts-total{font-size:15px;font-weight:700;font-family:var(--mono);}
+.pts-detail{font-size:11px;color:var(--text3);font-family:var(--mono);}
+.empty-rank{text-align:center;padding:40px;color:var(--text3);}
+
+/* TOAST */
+#toast{position:fixed;bottom:24px;right:24px;background:var(--s2);border:1px solid var(--border2);border-radius:8px;padding:12px 20px;font-size:13px;z-index:9999;transform:translateY(80px);opacity:0;transition:all .3s;}
+#toast.show{transform:translateY(0);opacity:1;}
+#toast.ok{border-left:3px solid var(--green);}
+#toast.err{border-left:3px solid var(--red);}
+
+/* SETUP PAGE */
+.setup-step{display:flex;gap:16px;margin-bottom:22px;}
+.step-num{width:32px;height:32px;border-radius:50%;background:var(--s3);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;font-family:var(--mono);flex-shrink:0;color:var(--text2);}
+.step-body{flex:1;padding-top:4px;}
+.step-title{font-size:14px;font-weight:700;margin-bottom:4px;}
+.step-text{font-size:12px;color:var(--text2);line-height:1.7;}
+.code-pill{display:inline-block;background:#0a0c10;border:1px solid var(--border);border-radius:4px;padding:2px 7px;font-family:var(--mono);font-size:11px;color:var(--blue);}
+.alert-box{background:rgba(240,180,41,.07);border:1px solid rgba(240,180,41,.2);border-radius:7px;padding:12px 16px;font-size:12px;color:#c9a03a;margin:12px 0;line-height:1.7;}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div style="font-size:28px;margin-bottom:10px;">⚽</div>
+    <h1>Panel Admin</h1>
+    <p>Mundial FIFA 2026 · Acceso restringido</p>
+    <input type="password" id="passInput" placeholder="Contraseña" onkeydown="if(event.key==='Enter')login()">
+    <button class="btn-gold" onclick="login()">Entrar</button>
+    <div class="login-err" id="loginErr">Contraseña incorrecta</div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app" style="display:grid">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sb-head">
+      <div class="sb-logo">⚽ FIFA 2026</div>
+      <div class="sb-title">Admin Panel</div>
+      <div class="sb-sub" id="sbUser"></div>
+    </div>
+    <nav class="sb-nav">
+      <div class="sb-section">Panel</div>
+      <button class="nav-btn active" onclick="showPage('resultados',this)">
+        <span class="nav-icon">📝</span> Resultados
+      </button>
+      <button class="nav-btn" onclick="showPage('ranking',this)">
+        <span class="nav-icon">🏆</span> Ranking
+      </button>
+      <div class="sb-section">Ayuda</div>
+      <button class="nav-btn" onclick="showPage('setup',this)">
+        <span class="nav-icon">⚙️</span> Configuración
+      </button>
+    </nav>
+    <div class="sb-foot">
+      <div class="url-label">URL del Web App (Apps Script)</div>
+      <input class="url-input" id="webAppUrl" placeholder="https://script.google.com/macros/...">
+      <button class="btn-save-url" onclick="saveUrl()">Guardar URL</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- PAGE: RESULTADOS -->
+    <div class="page active" id="page-resultados">
+      <div class="page-title">Resultados reales</div>
+      <div class="page-sub">Ingresa los marcadores al terminar cada partido. Se guardan directamente en el Sheet.</div>
+      <div id="gruposGrid" class="grupos-grid">
+        <div style="color:var(--text3);font-size:13px;grid-column:1/-1;padding:20px 0;">
+          Configura la URL del Web App en el panel izquierdo para empezar.
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE: RANKING -->
+    <div class="page" id="page-ranking">
+      <div class="page-title">Ranking</div>
+      <div class="page-sub">Recalcula para actualizar con los últimos resultados. También actualiza la pestaña RANKING del Sheet.</div>
+      <div class="rank-controls">
+        <button class="btn-recalc" id="btnRecalc" onclick="recalcularRanking()">⚡ Recalcular ranking</button>
+        <span class="recalc-status" id="recalcStatus"></span>
+      </div>
+      <div class="card">
+        <table class="rank-table" id="rankTable">
+          <thead>
+            <tr>
+              <th>POS</th>
+              <th>JUGADOR</th>
+              <th>TOTAL</th>
+              <th>GRUPOS</th>
+              <th>KNOCKOUTS</th>
+            </tr>
+          </thead>
+          <tbody id="rankBody">
+            <tr><td colspan="5" class="empty-rank">Pulsa "Recalcular ranking" para ver los resultados.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- PAGE: SETUP -->
+    <div class="page" id="page-setup">
+      <div class="page-title">Configuración</div>
+      <div class="page-sub">Pasos para conectar este panel con tu Google Sheet.</div>
+
+      <div class="setup-step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">Abre Apps Script en tu Google Sheet</div>
+          <div class="step-text">En el Sheet: <strong>Extensiones → Apps Script</strong>. Borra el código por defecto y pega el archivo <span class="code-pill">ranking-script.gs</span> que tienes en tu proyecto.</div>
+        </div>
+      </div>
+
+      <div class="setup-step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">Despliega como Web App</div>
+          <div class="step-text">
+            En Apps Script: <strong>Implementar → Nueva implementación</strong><br>
+            · Tipo: <span class="code-pill">Aplicación web</span><br>
+            · Ejecutar como: <span class="code-pill">Yo</span><br>
+            · Quién tiene acceso: <span class="code-pill">Cualquier usuario</span><br>
+            · Clic en <strong>Implementar</strong> → copia la URL que aparece
+          </div>
+        </div>
+      </div>
+
+      <div class="setup-step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">Pega la URL aquí abajo</div>
+          <div class="step-text">En el panel izquierdo de esta página hay un campo "URL del Web App". Pégala ahí y guarda. A partir de ese momento este panel se comunica con tu Sheet.</div>
+        </div>
+      </div>
+
+      <div class="setup-step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="step-title">Crea las pestañas del Sheet (primera vez)</div>
+          <div class="step-text">Desde el Sheet abre el menú <span class="code-pill">⚽ Mundial → Crear pestaña RESULTADOS</span>. Esto precarga los 72 partidos de grupos. Luego <span class="code-pill">Crear pestaña RANKING</span>.</div>
+        </div>
+      </div>
+
+      <div class="alert-box">
+        ⚠️ La contraseña del panel se define en la primera línea del script .gs (<span class="code-pill">ADMIN_PASSWORD</span>). Cámbiala por una que solo conozcas tú y vuelve a desplegar el Web App.
+      </div>
+
+      <div class="setup-step">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <div class="step-title">Guarda este archivo en GitHub (carpeta raíz)</div>
+          <div class="step-text">Sube <span class="code-pill">admin.html</span> a tu repo. Los usuarios no saben que existe — no hay ningún link hacia él desde el sitio. Para acceder tú: <span class="code-pill">tu-sitio.github.io/admin.html</span></div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ── CONFIG ───────────────────────────────────────────────────
+const LOCAL_PASS_KEY = 'wc2026_admin_pass';
+const LOCAL_URL_KEY  = 'wc2026_webapp_url';
+
+let SESSION_PASS = '';
+let WEB_APP_URL  = '';
+
+// Todos los partidos de grupos
+const GRUPOS = {
+  'A':['Mexico','South Africa','Czech Republic','South Korea'],
+  'B':['Switzerland','Canada','Qatar','Bosnia & Herzegovina'],
+  'C':['Brazil','Scotland','Morocco','Haiti'],
+  'D':['Turkey','Paraguay','USA','Australia'],
+  'E':['Ivory Coast','Curazao','Ecuador','Germany'],
+  'F':['Netherlands','Japan','Sweden','Tunisia'],
+  'G':['Egypt','Belgium','New Zealand','Iran'],
+  'H':['Uruguay','Cape Verde','Spain','Saudi Arabia'],
+  'I':['Norway','France','Iraq','Senegal'],
+  'J':['Jordan','Argentina','Algeria','Austria'],
+  'K':['DR Congo','Portugal','Colombia','Uzbekistan'],
+  'L':['Ghana','Panama','Croatia','England']
+};
+
+// Resultados guardados localmente para reflejar en UI
+let savedResults = {};
+
+// ── LOGIN ────────────────────────────────────────────────────
+function login() {
+  const pass = document.getElementById('passInput').value.trim();
+  if (!pass) return;
+  SESSION_PASS = pass;
+
+  // Verificar contra el script (si hay URL) o dejar pasar localmente
+  WEB_APP_URL = localStorage.getItem(LOCAL_URL_KEY) || '';
+  if (WEB_APP_URL) {
+    apiGet('getResultados').then(res => {
+      if (res.ok === false && res.error === 'Contraseña incorrecta') {
+        document.getElementById('loginErr').style.display = 'block';
+        SESSION_PASS = '';
+      } else {
+        launchApp(res.resultados || {});
+      }
+    }).catch(() => {
+      // Si falla la conexión, entra igual (modo offline)
+      launchApp({});
+    });
+  } else {
+    launchApp({});
+  }
+}
+
+function launchApp(resultados) {
+  savedResults = resultados;
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('app').style.display = 'grid';
+  document.getElementById('sbUser').textContent = 'sesión activa';
+  document.getElementById('webAppUrl').value = WEB_APP_URL;
+  renderGrupos();
+}
+
+// ── NAVEGACIÓN ───────────────────────────────────────────────
+function showPage(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  btn.classList.add('active');
+
+  if (id === 'ranking') cargarRanking();
+}
+
+// ── RENDER GRUPOS ────────────────────────────────────────────
+function renderGrupos() {
+  const grid = document.getElementById('gruposGrid');
+  grid.innerHTML = '';
+
+  for (const g in GRUPOS) {
+    const equipos = GRUPOS[g];
+    const partidos = [];
+    for (let i = 0; i < equipos.length; i++)
+      for (let j = i+1; j < equipos.length; j++)
+        partidos.push([equipos[i], equipos[j]]);
+
+    const completados = partidos.filter(([t1,t2]) => {
+      const k = t1+'__'+t2;
+      return savedResults[k] !== undefined;
+    }).length;
+
+    const card = document.createElement('div');
+    card.className = 'grupo-card';
+    card.innerHTML = `
+      <div class="grupo-header">
+        <span class="grupo-label">GRUPO ${g}</span>
+        <span class="grupo-status">${completados}/${partidos.length} completados</span>
+      </div>
+      ${partidos.map(([t1,t2]) => {
+        const k = t1+'__'+t2;
+        const r = savedResults[k];
+        const h = r !== undefined ? r.home : '';
+        const a = r !== undefined ? r.away : '';
+        const saved = r !== undefined ? 'saved' : '';
+        return `
+          <div class="match-item" id="mi_${k.replace(/[^a-z0-9]/gi,'_')}">
+            <div class="match-teams"><strong>${t1}</strong> vs <strong>${t2}</strong></div>
+            <div class="score-pair">
+              <input type="number" class="score-in ${saved}" min="0" placeholder="-"
+                value="${h}" id="h_${k.replace(/[^a-z0-9]/gi,'_')}" style="width:36px">
+              <span class="score-sep">-</span>
+              <input type="number" class="score-in ${saved}" min="0" placeholder="-"
+                value="${a}" id="a_${k.replace(/[^a-z0-9]/gi,'_')}" style="width:36px">
+            </div>
+            <button class="btn-save-match" onclick="saveMatch('${t1}','${t2}','GRUPOS')">✓</button>
+          </div>`;
+      }).join('')}
+    `;
+    grid.appendChild(card);
+  }
+}
+
+// ── GUARDAR RESULTADO ────────────────────────────────────────
+async function saveMatch(t1, t2, fase) {
+  const k  = t1+'__'+t2;
+  const ks = k.replace(/[^a-z0-9]/gi,'_');
+  const hEl = document.getElementById('h_'+ks);
+  const aEl = document.getElementById('a_'+ks);
+  const btn = hEl.closest('.match-item').querySelector('.btn-save-match');
+
+  const h = hEl.value.trim();
+  const a = aEl.value.trim();
+
+  if (h === '' || a === '') { toast('Ingresa ambos marcadores', 'err'); return; }
+
+  btn.textContent = '...';
+  btn.className = 'btn-save-match saving';
+
+  if (!WEB_APP_URL) {
+    // Guardar solo local si no hay URL configurada
+    savedResults[k] = { home: Number(h), away: Number(a), fase };
+    hEl.classList.add('saved'); aEl.classList.add('saved');
+    btn.textContent = '✓'; btn.className = 'btn-save-match ok';
+    toast('Guardado localmente (sin Sheet)', 'ok');
+    updateGrupoStatus(t1, t2);
+    return;
+  }
+
+  try {
+    const res = await apiPost({ action:'guardarResultado', matchKey:k, home:Number(h), away:Number(a), fase });
+    if (res.ok) {
+      savedResults[k] = { home:Number(h), away:Number(a), fase };
+      hEl.classList.add('saved'); aEl.classList.add('saved');
+      btn.textContent = '✓'; btn.className = 'btn-save-match ok';
+      toast('Guardado en el Sheet ✓', 'ok');
+      updateGrupoStatus(t1, t2);
+    } else {
+      btn.textContent = '✗'; btn.className = 'btn-save-match';
+      toast('Error: ' + res.error, 'err');
+    }
+  } catch(e) {
+    btn.textContent = '✗'; btn.className = 'btn-save-match';
+    toast('Error de conexión', 'err');
+  }
+}
+
+function updateGrupoStatus(t1, t2) {
+  // Encontrar la tarjeta del grupo y actualizar el contador
+  renderGrupos();
+}
+
+// ── RANKING ──────────────────────────────────────────────────
+async function cargarRanking() {
+  if (!WEB_APP_URL) return;
+  document.getElementById('recalcStatus').textContent = 'Cargando...';
+  try {
+    const res = await apiGet('getRanking');
+    if (res.ok && res.jugadores.length > 0) {
+      renderRanking(res.jugadores);
+      document.getElementById('recalcStatus').textContent =
+        'Última actualización del Sheet · ' + res.jugadores.length + ' jugadores';
+    } else {
+      document.getElementById('recalcStatus').textContent = 'Sin datos aún';
+    }
+  } catch(e) {
+    document.getElementById('recalcStatus').textContent = 'Error al cargar';
+  }
+}
+
+async function recalcularRanking() {
+  if (!WEB_APP_URL) { toast('Configura la URL del Web App primero', 'err'); return; }
+  const btn = document.getElementById('btnRecalc');
+  const status = document.getElementById('recalcStatus');
+  btn.disabled = true;
+  btn.textContent = '⏳ Calculando...';
+  status.textContent = '';
+
+  try {
+    const res = await apiPost({ action:'recalcularRanking' });
+    if (res.ok) {
+      renderRanking(res.jugadores);
+      status.textContent = 'Actualizado ahora · ' + res.jugadores.length + ' jugadores';
+      toast('Ranking actualizado en el Sheet ✓', 'ok');
+    } else {
+      toast('Error: ' + res.error, 'err');
+      status.textContent = res.error;
+    }
+  } catch(e) {
+    toast('Error de conexión con el Sheet', 'err');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '⚡ Recalcular ranking';
+  }
+}
+
+function renderRanking(jugadores) {
+  const tbody = document.getElementById('rankBody');
+  if (!jugadores || jugadores.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" class="empty-rank">Sin datos todavía.</td></tr>';
+    return;
+  }
+  const medals = ['pos-1','pos-2','pos-3'];
+  tbody.innerHTML = jugadores.map((j, idx) => {
+    const posClass = idx < 3 ? medals[idx] : 'pos-n';
+    const posLabel = idx < 3 ? ['🥇','🥈','🥉'][idx] : (idx+1);
+    return `
+      <tr>
+        <td><span class="pos-badge ${posClass}">${posLabel}</span></td>
+        <td style="font-weight:600">${j.nombre || j.jugador}</td>
+        <td><span class="pts-total">${j.total}</span> <span style="color:var(--text3);font-size:11px;font-family:var(--mono)">pts</span></td>
+        <td><span class="pts-detail">${j.ptsGrupos ?? j.pts_grupos ?? 0}</span></td>
+        <td><span class="pts-detail">${j.ptsKO ?? j.pts_ko ?? 0}</span></td>
+      </tr>`;
+  }).join('');
+}
+
+// ── URL CONFIG ───────────────────────────────────────────────
+function saveUrl() {
+  const url = document.getElementById('webAppUrl').value.trim();
+  localStorage.setItem(LOCAL_URL_KEY, url);
+  WEB_APP_URL = url;
+  toast('URL guardada', 'ok');
+  if (url) renderGrupos();
+}
+
+// ── API HELPERS ──────────────────────────────────────────────
+async function apiGet(action) {
+  const url = `${WEB_APP_URL}?action=${action}&pass=${encodeURIComponent(SESSION_PASS)}`;
+  const res  = await fetch(url);
+  return res.json();
+}
+
+async function apiPost(body) {
+  body.pass = SESSION_PASS;
+  const res = await fetch(WEB_APP_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+  return res.json();
+}
+
+// ── TOAST ────────────────────────────────────────────────────
+let toastTimer;
+function toast(msg, type='ok') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'show ' + type;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.className = '', 3000);
+}
+
+// ── INIT ─────────────────────────────────────────────────────
+window.addEventListener('load', () => {
+  WEB_APP_URL = localStorage.getItem(LOCAL_URL_KEY) || '';
+});
+</script>
+</body>
+</html>
