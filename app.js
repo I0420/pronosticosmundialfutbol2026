@@ -956,4 +956,4 @@ async function loadLeaderboard() {
     console.error(e);
   }
 }
-}
+
