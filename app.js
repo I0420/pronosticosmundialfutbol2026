@@ -910,4 +910,50 @@ function roundRect(ctx, x, y, w, h, r) {
   ctx.lineTo(x, y + r);
   ctx.quadraticCurveTo(x, y, x + r, y);
   ctx.closePath();
+
+// ── LEADERBOARD ─────────────────────────────────────────────────
+async function loadLeaderboard() {
+  const container = document.getElementById('leaderboardContent');
+  container.innerHTML = '<p class="note-text" style="margin-top:20px;">Cargando ranking...</p>';
+
+  try {
+    const res = await fetch(LEADERBOARD_CSV_URL);
+    const text = await res.text();
+    const rows = text.trim().split('\n').slice(1); // saltar encabezado
+
+    if (!rows.length || rows[0].trim() === '') {
+      container.innerHTML = '<p class="note-text" style="margin-top:20px;">Aún no hay datos.</p>';
+      return;
+    }
+
+    // Parsear y ordenar por puntos
+    const players = rows
+      .map(row => {
+        const cols = row.split(',');
+        return {
+          name: (cols[0] || '').replace(/^"|"$/g, '').trim(),
+          pts:  parseInt((cols[1] || '0').replace(/^"|"$/g, '').trim(), 10) || 0
+        };
+      })
+      .filter(p => p.name)
+      .sort((a, b) => b.pts - a.pts);
+
+    const medals = ['🥇', '🥈', '🥉'];
+
+    container.innerHTML = `
+      <div class="leaderboard-table">
+        ${players.map((p, i) => `
+          <div class="lb-row ${i === 0 ? 'lb-first' : i === 1 ? 'lb-second' : i === 2 ? 'lb-third' : ''}">
+            <span class="lb-pos">${medals[i] || (i + 1)}</span>
+            <span class="lb-name">${p.name}</span>
+            <span class="lb-pts">${p.pts} <small>pts</small></span>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  } catch (e) {
+    container.innerHTML = '<p class="note-text" style="color:var(--error-color)">Error al cargar el ranking. Intenta de nuevo.</p>';
+    console.error(e);
+  }
+}
 }
