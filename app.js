@@ -600,7 +600,10 @@ async function loadLeaderboard() {
   try {
     const res = await fetch(LEADERBOARD_CSV_URL + '&cachebust=' + Date.now());
     const text = await res.text();
-    const rows = text.trim().split('\n').slice(1);
+    const rows = text.trim().split('\n').filter(row => {
+  const name = (row.split(',')[0] || '').replace(/^"|"$/g, '').trim().toLowerCase();
+  return name && name !== 'nombre' && name !== 'name' && name !== 'jugador';
+});
 
     if (!rows.length || rows[0].trim() === '') {
       container.innerHTML = '<p class="note-text" style="margin-top:20px;">Aún no hay datos en el ranking.</p>';
