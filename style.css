@@ -548,4 +548,35 @@ header .subtitle {
 .bracket:has(.bracket-round--wide) {
   flex-direction: column;
   min-width: unset;
+
+/* ── Leaderboard ─────────────────────────────────────────────── */
+.leaderboard-table {
+  max-width: 600px;
+  margin: 20px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.lb-row {
+  display: flex;
+  align-items: center;
+  background-color: var(--bg-light);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 16px 20px;
+  gap: 16px;
+  transition: transform 0.2s;
+}
+
+.lb-row:hover { transform: translateX(4px); }
+
+.lb-first  { border-color: #FFD700; background: linear-gradient(90deg, #2a2400, var(--bg-light)); }
+.lb-second { border-color: #C0C0C0; background: linear-gradient(90deg, #1e1e1e, var(--bg-light)); }
+.lb-third  { border-color: #CD7F32; background: linear-gradient(90deg, #2a1500, var(--bg-light)); }
+
+.lb-pos  { font-size: 1.6rem; width: 40px; text-align: center; }
+.lb-name { flex: 1; font-size: 1.1rem; font-weight: 600; color: #fff; }
+.lb-pts  { font-size: 1.4rem; font-weight: bold; color: var(--accent-color); }
+.lb-pts small { font-size: 0.7rem; color: var(--text-muted); }
 }
