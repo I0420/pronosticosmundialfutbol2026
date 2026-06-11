@@ -954,6 +954,6 @@ async function loadLeaderboard() {
   } catch (e) {
     container.innerHTML = '<p class="note-text" style="color:var(--error-color)">Error al cargar el ranking. Intenta de nuevo.</p>';
     console.error(e);
-  }
+  
 }
-
+}
