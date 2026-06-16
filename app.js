@@ -185,7 +185,7 @@ function initToolbar() {
   const btnScoringHelp = document.getElementById('btnScoringHelp');
   if (btnScoringHelp) {
     btnScoringHelp.addEventListener('click', () => {
-      alert('Sistema de Puntos:\n\n- Marcador exacto (Grupos y Knockouts): 3 puntos\n- Acertar ganador: 1 punto\n-Si nadie acierta y el partido termina empatado: 1 punto a todos\n-Si aciertas el empate con marcador exacto:3 puntos 1 un punto si no es marcador exacto (no aplica 1 punto para todos)');
+      alert('Sistema de Puntos:\n\n- Marcador exacto (fase de grupos y eliminatorias): 3 puntos\n- Acertar al ganador del partido, aunque no sea el marcador exacto: 1 punto\n-Si ningún participante acierta el resultado y el partido termina en empate, se otorgará 1 punto a todos los participantes\n\n- Si pronosticas un empate:\n- 3 puntos si aciertas el marcador exacto\n- 1 punto si aciertas que termina empatado, pero no el marcador exacto\n- En este caso, no aplica la regla de otorgar 1 punto a todos)');
     });
   }
 
